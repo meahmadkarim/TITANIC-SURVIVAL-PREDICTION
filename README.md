@@ -28,3 +28,15 @@ The dataset is included in this repository. Use `--data PATH` for another file w
 Preprocessing is fitted on training rows only. A fixed seed makes the split reproducible. The included 418-row tested.csv has labels that exactly equal the female-sex indicator. It is not suitable for validating real survival prediction. Default execution refuses these labels; the explicit demo flag is for pipeline illustration only.
 
 The original notebook is retained as a learning artefact. Cleared notebook outputs must be regenerated; use `train.py` for the maintained evaluation path.
+
+## Model, libraries and data flow
+
+The maintained classifier is **scikit-learn `SVC(kernel='linear')`**, a support-vector classifier. A linear kernel does not make this linear regression.
+
+- **pandas** reads the CSV and selects age, fare, sibling/spouse count, parent/child count, passenger class, sex and embarkation port.
+- **`train_test_split`** uses a stratified 70/30 split with seed 42.
+- Numeric inputs use **`SimpleImputer(strategy='median')`** followed by **`StandardScaler`**. Categorical inputs are imputed and **one-hot encoded** with unseen-category handling.
+- **`ColumnTransformer` and `Pipeline`** keep preprocessing fitted on training data rather than the full dataset.
+- **`classification_report`** prints precision, recall and F1. These numbers are explicitly labelled demonstration-only when the synthetic-label override is used.
+
+The target guard is essential: the included target exactly matches whether sex is female. Excellent scores on this file demonstrate recovery of that rule, not genuine survival prediction.
